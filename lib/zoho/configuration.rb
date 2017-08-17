@@ -1,7 +1,6 @@
 module Zoho
   class Configuration
-    attr_accessor :organization_id
-    attr_accessor :auth_token
+    attr_accessor :organization_id, :auth_token
 
     def initialize
       @organization_id
