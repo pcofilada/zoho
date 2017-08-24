@@ -1,70 +1,95 @@
-require 'faraday'
+require 'active_support/core_ext/hash/indifferent_access'
+require 'httparty'
 require 'json'
 
 module Zoho
   module Inventory
     class Item
-      include Enumerable
+      BASE_URI = 'https://inventory.zoho.com/api/v1/items'.freeze
 
-      attr_reader :results
-
-      def initialize
-        @results ||= []
+      def initialize(page: 1)
+        @page = page
       end
 
       def all
-        @results = request_items
-        self
+        uri = "#{BASE_URI}#{config_uri}&page=#{@page}" \
+          "&per_page=#{Zoho.configuration.per_page}" \
+
+        request_item('get', uri)
       end
 
-      def available
-        @results = request_items unless @results.any?
+      def where(**args)
+        uri = "#{BASE_URI}#{config_uri}&page=#{@page}" \
+          "&per_page=#{Zoho.configuration.per_page}"
+        uri << filter_uri(args[:filter_by])
+        uri << sort_uri(args[:sort_column], args[:sort_order])
+        uri << search_uri(args[:search_text])
 
-        @results = @results.select do |result|
-          !result['available_stock'].nil? && result['available_stock'] > 0
-        end
-        self
+        request_item('get', uri)
       end
 
-      def recent(items = 4)
-        @results = request_items unless @results.any?
+      def create(params)
+        uri = "#{BASE_URI}#{config_uri}"
 
-        @results = @results.sort_by! do |result|
-          result['created_time']
-        end[0, items]
-        self
+        request_item('post', uri, body: { JSONString: params.to_json })
+      end
+
+      def update(item_id, params)
+        uri = "#{BASE_URI}/#{item_id}#{config_uri}"
+
+        request_item('put', uri, body: { JSONString: params.to_json })
       end
 
       def find(item_id)
-        @results = request_items unless @results.any?
+        uri = "#{BASE_URI}/#{item_id}#{config_uri}"
 
-        @results = @results.find { |result| result['item_id'] == item_id }
+        request_item('get', uri)
       end
 
-      def each(&block)
-        @results.each(&block)
+      def destroy(item_id)
+        uri = "#{BASE_URI}/#{item_id}#{config_uri}"
+
+        request_item('delete', uri)
+      end
+
+      def active!(item_id)
+        uri = "#{BASE_URI}/#{item_id}/active#{config_uri}"
+
+        request_item('post', uri)
+      end
+
+      def inactive!(item_id)
+        uri = "#{BASE_URI}/#{item_id}/inactive#{config_uri}"
+
+        request_item('post', uri)
       end
 
       private
 
-      def api_uri
-        'https://inventory.zoho.com/api/v1/items?' \
-          "authtoken=#{Zoho.configuration.auth_token}" \
-          "&organization_id=#{Zoho.configuration.organization_id}"
+      def config_uri
+        "?authtoken=#{Zoho.configuration.auth_token}" \
+        "&organization_id=#{Zoho.configuration.organization_id}"
       end
 
-      def request_items
-        conn = Faraday.get(api_uri)
-        append_image_link(JSON.parse(conn.body)['items'])
+      def filter_uri(filter_by)
+        filter_by.nil? ? '' : "&filter_by=#{filter_by}"
       end
 
-      def append_image_link(results)
-        results.each do |result|
-          result['image_link'] = 'https://inventory.zoho.com/api/v1/items/' \
-            "#{result['item_id']}/image?" \
-            "authtoken=#{Zoho.configuration.auth_token}" \
-            "&organization_id=#{Zoho.configuration.organization_id}"
-        end
+      def sort_uri(sort_column, sort_order = 'D')
+        uri = ''
+        uri << "&sort_column=#{sort_column}"
+        uri << "&sort_order=#{sort_order}"
+
+        sort_column.nil? ? '' : uri
+      end
+
+      def search_uri(text)
+        text.nil? ? '' : "&search_text=#{text}"
+      end
+
+      def request_item(method, uri, params = {})
+        response = HTTParty.send(method, uri, params)
+        JSON.parse(response.body).with_indifferent_access
       end
     end
   end
