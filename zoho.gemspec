@@ -5,7 +5,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'zoho/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'zoho'
+  spec.name          = 'zoho-ruby'
   spec.version       = Zoho::VERSION
   spec.authors       = ['Patrick Ofilada']
   spec.email         = ['pcofilada@gmail.com']
