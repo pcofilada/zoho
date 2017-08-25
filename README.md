@@ -7,7 +7,7 @@ Ruby wrapper for Zoho API. For additional documentation visit: https://www.zoho.
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'zoho-ruby'
+gem 'zoho_ruby'
 ```
 
 And then execute:
@@ -16,7 +16,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install zoho-ruby
+    $ gem install zoho_ruby
 
 ## Configuration
 Zoho API requires `organization_id` and `auth_token`. Visit https://www.zoho.com/developer/rest-api.html for instruction on how to get `organization_id` and `auth_token`.
