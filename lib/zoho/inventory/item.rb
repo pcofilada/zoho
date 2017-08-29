@@ -13,9 +13,9 @@ module Zoho
 
       def all
         uri = "#{BASE_URI}#{config_uri}&page=#{@page}" \
-          "&per_page=#{Zoho.configuration.per_page}" \
+          "&per_page=#{Zoho.configuration.per_page}"
 
-        request_item('get', uri)
+        return_items_with_image_link(uri)
       end
 
       def where(**args)
@@ -25,25 +25,31 @@ module Zoho
         uri << sort_uri(args[:sort_column], args[:sort_order])
         uri << search_uri(args[:search_text])
 
-        request_item('get', uri)
+        return_items_with_image_link(uri)
       end
 
       def create(params)
         uri = "#{BASE_URI}#{config_uri}"
+        result = request_item('post', uri, body: { JSONString: params.to_json })
+        add_image_link(result[:item]) if result[:item]
 
-        request_item('post', uri, body: { JSONString: params.to_json })
+        result
       end
 
       def update(item_id, params)
         uri = "#{BASE_URI}/#{item_id}#{config_uri}"
+        result = request_item('put', uri, body: { JSONString: params.to_json })
+        add_image_link(result[:item]) if result[:item]
 
-        request_item('put', uri, body: { JSONString: params.to_json })
+        result
       end
 
       def find(item_id)
         uri = "#{BASE_URI}/#{item_id}#{config_uri}"
+        result = request_item('get', uri)
+        add_image_link(result[:item]) if result[:item]
 
-        request_item('get', uri)
+        result
       end
 
       def destroy(item_id)
@@ -85,6 +91,29 @@ module Zoho
 
       def search_uri(text)
         text.nil? ? '' : "&search_text=#{text}"
+      end
+
+      def image_uri(item_id)
+        "#{BASE_URI}/#{item_id}/image#{config_uri}"
+      end
+
+      def add_image_link(item)
+        item[:image_link] = unless item[:image_name].empty?
+                              image_uri(item[:item_id])
+                            end
+      end
+
+      def items_add_image_link(items)
+        items.map do |item|
+          add_image_link(item) if item
+        end
+      end
+
+      def return_items_with_image_link(uri)
+        result = request_item('get', uri)
+        items_add_image_link(result[:items]) if result[:items]
+
+        result
       end
 
       def request_item(method, uri, params = {})
