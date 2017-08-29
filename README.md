@@ -27,7 +27,7 @@ If you have the `organization_id` and `auth_token` already, here's what you need
 Zoho.configure do |config|
   config.organization_id = 'your_organization_id'
   config.auth_token      = 'your_auth_token'
-  config.per_page        = 20 // Default and maximum items per page is 200
+  config.per_page        = 20 # Default and maximum items per page is 200
 end
 ```
 ## Usage

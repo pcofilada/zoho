@@ -1,1 +1,4 @@
-TODO: Write usage instructions here
+# Table of contents
+
+* FINANCE
+  * [Inventory](inventory)
