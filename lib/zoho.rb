@@ -1,6 +1,7 @@
 require 'zoho/version'
 require 'zoho/configuration'
-require 'zoho/inventory/item'
+require 'zoho/inventory/api'
+require 'zoho/inventory/item_group'
 
 module Zoho
   class << self
