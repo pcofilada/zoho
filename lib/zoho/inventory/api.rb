@@ -21,6 +21,10 @@ module Zoho
         JSON.parse(response.body)
       end
 
+      def merge_options(options = {})
+        options.map { |key, value| "#{key}=#{value}" }.join('&')
+      end
+
       private
 
       def config_uri
