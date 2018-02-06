@@ -1,7 +1,7 @@
 module Zoho
   module Inventory
-    class Item
-      @api = Zoho::Inventory::API.new(type: 'items')
+    class ItemGroup
+      @api = Zoho::Inventory::API.new(type: 'itemgroups')
 
       def self.all(options = @api.default_options)
         uri       = @api.construct_uri
@@ -9,8 +9,8 @@ module Zoho
         @api.request(uri, 'get')
       end
 
-      def self.find(item_id)
-        uri = @api.construct_uri("/#{item_id}")
+      def self.find(itemgroup_id)
+        uri = @api.construct_uri("/#{itemgroup_id}")
         @api.request(uri, 'get')
       end
 
@@ -19,23 +19,23 @@ module Zoho
         @api.request(uri, 'post', body: { JSONString: params.to_json })
       end
 
-      def self.update(item_id, params)
-        uri = @api.construct_uri("/#{item_id}")
+      def self.update(itemgroup_id, params)
+        uri = @api.construct_uri("/#{itemgroup_id}")
         @api.request(uri, 'put', body: { JSONString: params.to_json })
       end
 
-      def self.destroy(item_id)
-        uri = @api.construct_uri("/#{item_id}")
+      def self.destroy(itemgroup_id)
+        uri = @api.construct_uri("/#{itemgroup_id}")
         @api.request(uri, 'delete')
       end
 
-      def self.active!(item_id)
-        uri = @api.construct_uri("/#{item_id}/active")
+      def self.active!(itemgroup_id)
+        uri = @api.construct_uri("/#{itemgroup_id}/active")
         @api.request(uri, 'post')
       end
 
-      def self.inactive!(item_id)
-        uri = @api.construct_uri("/#{item_id}/inactive")
+      def self.inactive!(itemgroup_id)
+        uri = @api.construct_uri("/#{itemgroup_id}/inactive")
         @api.request(uri, 'post')
       end
     end

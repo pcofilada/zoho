@@ -11,7 +11,7 @@ Creates a new item in Zoho Inventory.
 ```ruby
 params = { name: 'Bags-small', rate: 10, purchase_rate: 10 }
 
-Zoho::Inventory::Item.new.create(params)
+Zoho::Inventory::Item.create(params)
 ```
 Check https://www.zoho.com/inventory/api/v1/#Items_Create_an_item for more arguments that you can pass as params.
 
@@ -24,7 +24,7 @@ Fetches the details for an existing item.
 ```ruby
 item_id = '1234567890'
 
-Zoho::Inventory::Items.new.find(item_id)
+Zoho::Inventory::Item.find(item_id)
 ```
 
 ##### Update an item
@@ -37,7 +37,7 @@ Update the details of an item.
 item_id = '1234567890'
 params = { name: 'Bags small', rate: 5 }
 
-Zoho::Inventory::Item.new.update(item_id, params)
+Zoho::Inventory::Item.update(item_id, params)
 ```
 Check https://www.zoho.com/inventory/api/v1/#Items_Update_an_item for more arguments that you can pass as params.
 
@@ -50,7 +50,7 @@ Deletes an existing item from Zoho Inventory.
 ```ruby
 item_id = '1234567890'
 
-Zoho::Inventory::Item.new.destroy(item_id)
+Zoho::Inventory::Item.destroy(item_id)
 ```
 
 ##### Mark as active
@@ -62,7 +62,7 @@ Changes the status of an item to active.
 ```ruby
 item_id = '1234567890'
 
-Zoho::Inventory::Item.new.active!(item_id)
+Zoho::Inventory::Item.active!(item_id)
 ```
 
 ##### Mark as inactive
@@ -74,7 +74,7 @@ Mark an item as inactive.
 ```ruby
 item_id = '1234567890'
 
-Zoho::Inventory::Item.new.inactive!(item_id)
+Zoho::Inventory::Item.inactive!(item_id)
 ```
 
 ##### List all the items
@@ -84,7 +84,7 @@ Lists all the items present in Zoho Inventory.
 <!-- {.file-heading} -->
 
 ```ruby
-Zoho::Inventory.new.all
+Zoho::Inventory::Item.all
 ```
 
 ##### List all the items based on arguments passed
@@ -92,9 +92,8 @@ Zoho::Inventory.new.all
 <!-- {.file-heading} -->
 
 ```ruby
-Zoho::Inventory.new
-               .where(filter_by: 'Status.Active', sort_column: 'created_time'
-                      sort_order: 'D', search_text: 'Bags')
+Zoho::Inventory::Item.all(filter_by: 'Status.Active', sort_column: 'created_time',
+                    sort_order: 'D', search_text: 'Bags', page: 1, per_page: 20)
 
 # filter_by (`Status.All`, `Status.Active`, `Status.Inactive`)
 # sort_column (`name`, `rate`, `created_time`)

@@ -1,5 +1,7 @@
 require 'zoho/version'
 require 'zoho/configuration'
+require 'zoho/inventory/api'
+require 'zoho/inventory/item_group'
 require 'zoho/inventory/item'
 
 module Zoho
