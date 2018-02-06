@@ -3,12 +3,7 @@ module Zoho
     class ItemGroup
       @api = Zoho::Inventory::API.new(type: 'itemgroups')
 
-      def self.all
-        uri = @api.construct_uri
-        @api.request(uri, 'get')
-      end
-
-      def self.where(options = {})
+      def self.all(options = @api.default_options)
         uri       = @api.construct_uri
         uri.query = [uri.query, @api.merge_options(options)].join('&')
         @api.request(uri, 'get')

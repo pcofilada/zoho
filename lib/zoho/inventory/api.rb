@@ -25,6 +25,10 @@ module Zoho
         options.map { |key, value| "#{key}=#{value}" }.join('&')
       end
 
+      def default_options
+        { page: 1, per_page: Zoho.configuration.per_page }
+      end
+
       private
 
       def config_uri
