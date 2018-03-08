@@ -19,7 +19,7 @@ module Zoho
       def request(uri, method, params = {})
         response = HTTParty.send(method, uri, params)
 
-        attach_item_image_url(response)
+        parse_result(response)
       end
 
       def merge_options(options = {})
@@ -41,20 +41,32 @@ module Zoho
         "#{BASE_URI}items/#{item['item_id']}/image/#{config_uri}"
       end
 
-      def attach_item_image_url(response)
+      def parse_result(response)
         result = JSON.parse(response.body)
 
-        items_image_url(result['items']) if type == 'items'
+        attach_items_image_url(result) if type == 'items'
 
         result
       end
 
+      def attach_items_image_url(result)
+        item = result['items'] || result['item']
+
+        if item.is_a?(Array)
+          items_image_url(item)
+        else
+          item_image_url(item)
+        end
+      end
+
       def items_image_url(items)
         items.map do |item|
-          unless item['image_name'].empty?
-            item['image_url'] = item_image_uri(item)
-          end
+          item_image_url(item) unless item['image_name'].empty?
         end
+      end
+
+      def item_image_url(item)
+        item['image_url'] = item_image_uri(item)
       end
     end
   end
